@@ -1,6 +1,6 @@
 import { ArrowRight, CheckCircle2, Headset, ShieldCheck } from "lucide-react";
+import Image from "next/image";
 import Reveal from "@/components/Reveal";
-import TruckIllustration from "@/components/TruckIllustration";
 import { CITIES, STATS } from "@/lib/content";
 
 const TRUST_ITEMS = [
@@ -112,10 +112,17 @@ export default function Hero() {
             </Reveal>
           </div>
 
-          {/* Kamyon sahnesi */}
+          {/* Görsel alanı */}
           <Reveal delay={0.2} className="relative">
-            <div className="animate-float-slow">
-              <TruckIllustration />
+            <div className="animate-float-slow rounded-[2rem] border border-white/60 bg-white/70 p-3 shadow-2xl shadow-navy-950/10 backdrop-blur dark:border-white/10 dark:bg-white/5">
+              <Image
+                src="/silder.png"
+                alt="Egehan Lojistik hizmetleri"
+                width={800}
+                height={600}
+                priority
+                className="h-auto w-full rounded-[1.4rem] object-cover"
+              />
             </div>
             <div className="glass absolute left-0 top-6 flex items-center gap-2.5 rounded-2xl px-4 py-3 sm:left-2 sm:top-10">
               <span className="grid size-9 place-items-center rounded-xl bg-orange-500/15 text-orange-500">
