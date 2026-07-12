@@ -116,7 +116,7 @@ export default function Hero() {
           <Reveal delay={0.2} className="relative">
             <div className="animate-float-slow rounded-[2rem] border border-white/60 bg-white/70 p-3 shadow-2xl shadow-navy-950/10 backdrop-blur dark:border-white/10 dark:bg-white/5">
               <Image
-                src="/silder.png"
+                src="/silder.jpg"
                 alt="Egehan Lojistik hizmetleri"
                 width={800}
                 height={600}
