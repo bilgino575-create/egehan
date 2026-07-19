@@ -157,6 +157,7 @@ model Testimonial {
   photoMediaId    String?
   active          Boolean  @default(true)
   homepageVisible Boolean  @default(true)
+  approved        Boolean  @default(true)
   order           Int      @default(0)
   createdAt       DateTime @default(now())
 }

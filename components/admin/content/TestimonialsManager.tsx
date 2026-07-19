@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Pencil, Plus, Star, Trash2 } from "lucide-react";
+import { Check, Pencil, Plus, Star, Trash2, X } from "lucide-react";
 import type { Testimonial } from "@/lib/generated/prisma/client";
 import {
   createTestimonial,
   deleteTestimonial,
   reorderTestimonials,
+  setTestimonialApproval,
   updateTestimonial,
 } from "@/lib/actions/testimonials";
 import { useToast } from "@/components/admin/Toast";
@@ -29,6 +30,7 @@ interface FormState {
   rating: number;
   active: boolean;
   homepageVisible: boolean;
+  approved: boolean;
 }
 
 const EMPTY: FormState = {
@@ -39,6 +41,7 @@ const EMPTY: FormState = {
   rating: 5,
   active: true,
   homepageVisible: true,
+  approved: true,
 };
 
 function StarPicker({ value, onChange }: { value: number; onChange: (v: number) => void }) {
@@ -85,6 +88,7 @@ export default function TestimonialsManager({
 }) {
   const { push } = useToast();
   const [testimonials, setTestimonials] = useState(initialTestimonials);
+  const pendingCount = testimonials.filter((t) => !t.approved).length;
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState<FormState>(EMPTY);
   const [saving, setSaving] = useState(false);
@@ -104,8 +108,19 @@ export default function TestimonialsManager({
       rating: testimonial.rating,
       active: testimonial.active,
       homepageVisible: testimonial.homepageVisible,
+      approved: testimonial.approved,
     });
     setModalOpen(true);
+  }
+
+  async function handleApproval(id: string, approved: boolean) {
+    try {
+      const updated = await setTestimonialApproval(id, approved);
+      setTestimonials((prev) => prev.map((t) => (t.id === id ? { ...t, approved: updated.approved } : t)));
+      push("success", approved ? "Yorum onaylandı." : "Yorum reddedildi.");
+    } catch (err) {
+      push("error", err instanceof Error ? err.message : "İşlem başarısız oldu.");
+    }
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -121,6 +136,7 @@ export default function TestimonialsManager({
         photoMediaId: null,
         active: form.active,
         homepageVisible: form.homepageVisible,
+        approved: form.approved,
       };
 
       if (form.id) {
@@ -166,6 +182,16 @@ export default function TestimonialsManager({
 
   return (
     <div className="flex flex-col gap-4">
+      {pendingCount > 0 && (
+        <div className="flex items-center gap-2.5 rounded-2xl border border-orange-500/30 bg-orange-500/10 px-4 py-3 text-sm font-semibold text-orange-700 dark:text-orange-300">
+          <span className="grid size-6 shrink-0 place-items-center rounded-full bg-orange-500 text-xs font-extrabold text-navy-950">
+            {pendingCount}
+          </span>
+          Kullanıcılardan gelen, onay bekleyen yorum var. Aşağıda &ldquo;Onay Bekliyor&rdquo; etiketli
+          kartlardan onaylayın veya reddedin.
+        </div>
+      )}
+
       <div className="flex justify-end">
         <button
           type="button"
@@ -182,12 +208,21 @@ export default function TestimonialsManager({
       ) : (
         <SortableList items={testimonials} getId={(t) => t.id} onReorder={handleReorder}>
           {(testimonial, handle) => (
-            <div className="glass flex items-center gap-3 rounded-2xl p-4">
+            <div
+              className={`glass flex items-center gap-3 rounded-2xl p-4 ${
+                !testimonial.approved ? "border-2 border-orange-500/50" : ""
+              }`}
+            >
               {handle}
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="truncate text-sm font-bold text-navy-950 dark:text-white">{testimonial.name}</p>
                   <StarDisplay rating={testimonial.rating} />
+                  {!testimonial.approved && (
+                    <span className="shrink-0 rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-bold uppercase text-navy-950">
+                      Onay Bekliyor
+                    </span>
+                  )}
                   {!testimonial.active && (
                     <span className="shrink-0 rounded-full bg-navy-950/10 px-2 py-0.5 text-[10px] font-bold uppercase text-navy-900/60 dark:bg-white/10 dark:text-white/50">
                       Pasif
@@ -204,6 +239,28 @@ export default function TestimonialsManager({
                   {testimonial.service && ` · ${testimonial.service.title}`}
                 </p>
               </div>
+              {!testimonial.approved && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => handleApproval(testimonial.id, true)}
+                    aria-label="Onayla"
+                    title="Onayla"
+                    className="grid size-9 shrink-0 place-items-center rounded-lg text-emerald-600 hover:bg-emerald-500/10 dark:text-emerald-400"
+                  >
+                    <Check className="size-4.5" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleApproval(testimonial.id, false)}
+                    aria-label="Reddet"
+                    title="Reddet"
+                    className="grid size-9 shrink-0 place-items-center rounded-lg text-red-500/70 hover:bg-red-500/10 hover:text-red-600"
+                  >
+                    <X className="size-4.5" aria-hidden="true" />
+                  </button>
+                </>
+              )}
               <button
                 type="button"
                 onClick={() => openEdit(testimonial)}
@@ -293,6 +350,15 @@ export default function TestimonialsManager({
                 className="size-4 accent-orange-500"
               />
               Ana sayfada göster
+            </label>
+            <label className="flex items-center gap-2 text-sm font-semibold text-navy-900 dark:text-white">
+              <input
+                type="checkbox"
+                checked={form.approved}
+                onChange={(e) => setForm((f) => ({ ...f, approved: e.target.checked }))}
+                className="size-4 accent-orange-500"
+              />
+              Onaylı
             </label>
           </div>
           <button

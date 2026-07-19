@@ -1,6 +1,7 @@
 import { MapPin, Star } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import SectionHeading from "@/components/SectionHeading";
+import TestimonialForm, { type ServiceOption } from "@/components/TestimonialForm";
 
 export interface TestimonialData {
   id: string;
@@ -19,7 +20,13 @@ function initials(name: string): string {
     .toLocaleUpperCase("tr-TR");
 }
 
-export default function Testimonials({ testimonials }: { testimonials: TestimonialData[] }) {
+export default function Testimonials({
+  testimonials,
+  serviceOptions,
+}: {
+  testimonials: TestimonialData[];
+  serviceOptions: ServiceOption[];
+}) {
   return (
     <section
       id="yorumlar"
@@ -78,6 +85,10 @@ export default function Testimonials({ testimonials }: { testimonials: Testimoni
             </Reveal>
           ))}
         </div>
+
+        <Reveal>
+          <TestimonialForm serviceOptions={serviceOptions} />
+        </Reveal>
       </div>
     </section>
   );

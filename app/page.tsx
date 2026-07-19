@@ -122,7 +122,10 @@ export default async function Page() {
         <Services services={data.services} />
         <WhyUs cards={data.whyUsCards} />
         <Process steps={data.processSteps} />
-        <Testimonials testimonials={data.testimonials} />
+        <Testimonials
+          testimonials={data.testimonials}
+          serviceOptions={data.services.map((s) => ({ id: s.id, title: s.title }))}
+        />
         <FaqSection faqs={data.faqs} phoneE164={settings.phoneE164} />
         <Contact
           phoneE164={settings.phoneE164}

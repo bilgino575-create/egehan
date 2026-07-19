@@ -26,7 +26,7 @@ export async function getHomePageData() {
     prisma.processStep.findMany({ where: { active: true }, orderBy: { order: "asc" } }),
     prisma.faq.findMany({ where: { active: true }, orderBy: { order: "asc" } }),
     prisma.testimonial.findMany({
-      where: { active: true, homepageVisible: true },
+      where: { active: true, homepageVisible: true, approved: true },
       orderBy: { order: "asc" },
       include: { service: { select: { title: true } } },
     }),

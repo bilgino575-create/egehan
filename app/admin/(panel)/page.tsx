@@ -87,6 +87,19 @@ export default async function AdminDashboardPage() {
         <StatCard icon={Sparkles} label="Aktif Hizmet" value={data.content.services} />
         <StatCard icon={FileQuestion} label="Aktif SSS" value={data.content.faq} />
         <StatCard icon={Users} label="Yorum" value={data.content.testimonials} />
+        {data.content.pendingTestimonials > 0 ? (
+          <Link href="/admin/content/testimonials" className="block">
+            <StatCard
+              icon={AlertTriangle}
+              label="Onay Bekleyen Yorum"
+              value={data.content.pendingTestimonials}
+              hint="İncelemek için tıklayın"
+              accent="red"
+            />
+          </Link>
+        ) : (
+          <StatCard icon={AlertTriangle} label="Onay Bekleyen Yorum" value={0} accent="emerald" />
+        )}
         <StatCard icon={Images} label="Medya" value={data.content.media} />
         <StatCard icon={Users} label="Aktif Kullanıcı" value={data.content.users} />
       </div>
