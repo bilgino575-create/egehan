@@ -1,0 +1,247 @@
+// Egehan Lojistik — Admin CMS veritabanı şeması (Faz 1)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+  SEO
+  CONTENT_EDITOR
+  SUPPORT
+}
+
+model User {
+  id            String        @id @default(cuid())
+  name          String
+  email         String        @unique
+  passwordHash  String
+  role          Role          @default(EDITOR)
+  active        Boolean       @default(true)
+  avatarMediaId String?
+  lastLoginAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  activityLogs  ActivityLog[]
+}
+
+model Settings {
+  id                String   @id @default("singleton")
+  siteName          String
+  siteSlogan        String
+  siteDescription   String   @db.Text
+  siteUrl           String
+  phoneE164         String
+  email             String?
+  addressLine       String?
+  mapEmbedUrl       String?
+  workingHours      String?
+  logoMediaId       String?
+  faviconMediaId    String?
+  instagramUrl      String?
+  facebookUrl       String?
+  twitterUrl        String?
+  linkedinUrl       String?
+  kvkkText          String?  @db.Text
+  cookieText        String?  @db.Text
+  privacyText       String?  @db.Text
+  themePrimaryHex   String?
+  themeAccentHex    String?
+  headScripts       String?  @db.Text
+  bodyScripts       String?  @db.Text
+  footerScripts     String?  @db.Text
+  gaId              String?
+  gtmId             String?
+  gscVerification   String?
+  merchantId        String?
+  googleAdsId       String?
+  businessProfileId String?
+  recaptchaSiteKey  String?
+  recaptchaSecret   String?
+  updatedAt         DateTime @updatedAt
+  updatedById       String?
+}
+
+model NavItem {
+  id      String  @id @default(cuid())
+  label   String
+  href    String
+  order   Int     @default(0)
+  visible Boolean @default(true)
+}
+
+model HeroContent {
+  id                String   @id @default("singleton")
+  badgeLive         String
+  badgeVip          String
+  heading           String
+  headingHighlight  String
+  description       String   @db.Text
+  ctaPrimaryLabel   String
+  ctaSecondaryLabel String
+  trustItems        String[]
+  imageMediaId      String?
+  updatedAt         DateTime @updatedAt
+}
+
+model Stat {
+  id    String @id @default(cuid())
+  value String
+  label String
+  order Int    @default(0)
+}
+
+model City {
+  id     String  @id @default(cuid())
+  name   String  @unique
+  order  Int     @default(0)
+  active Boolean @default(true)
+}
+
+model Service {
+  id           String        @id @default(cuid())
+  slug         String        @unique
+  icon         String
+  title        String
+  description  String        @db.Text
+  features     String[]
+  popular      Boolean       @default(false)
+  order        Int           @default(0)
+  active       Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  testimonials Testimonial[]
+}
+
+model WhyUsCard {
+  id          String  @id @default(cuid())
+  icon        String
+  title       String
+  description String  @db.Text
+  order       Int     @default(0)
+  active      Boolean @default(true)
+}
+
+model ProcessStep {
+  id          String  @id @default(cuid())
+  icon        String
+  title       String
+  description String  @db.Text
+  order       Int     @default(0)
+  active      Boolean @default(true)
+}
+
+model Faq {
+  id       String  @id @default(cuid())
+  question String
+  answer   String  @db.Text
+  category String?
+  order    Int     @default(0)
+  active   Boolean @default(true)
+}
+
+model Testimonial {
+  id              String   @id @default(cuid())
+  name            String
+  route           String
+  serviceId       String?
+  service         Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  text            String   @db.Text
+  rating          Int      @default(5)
+  photoMediaId    String?
+  active          Boolean  @default(true)
+  homepageVisible Boolean  @default(true)
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
+}
+
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  email     String?
+  fromCity  String?
+  toCity    String?
+  service   String?
+  message   String?  @db.Text
+  ip        String?
+  userAgent String?
+  read      Boolean  @default(false)
+  replied   Boolean  @default(false)
+  deleted   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model Media {
+  id           String   @id @default(cuid())
+  filename     String
+  url          String
+  pathname     String   @unique
+  folder       String   @default("genel")
+  width        Int?
+  height       Int?
+  size         Int
+  mimeType     String
+  altText      String?
+  uploadedById String?
+  createdAt    DateTime @default(now())
+
+  @@index([folder])
+}
+
+model SeoMeta {
+  id             String   @id @default(cuid())
+  pageKey        String   @unique
+  title          String
+  description    String   @db.Text
+  keywords       String[]
+  canonicalPath  String   @default("/")
+  ogTitle        String?
+  ogDescription  String?
+  ogImageMediaId String?
+  twitterCard    String   @default("summary_large_image")
+  robotsIndex    Boolean  @default(true)
+  robotsFollow   Boolean  @default(true)
+  schemaOverride Json?
+  updatedAt      DateTime @updatedAt
+}
+
+model PageView {
+  id          String   @id @default(cuid())
+  path        String
+  sessionHash String
+  referrer    String?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt, path])
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String
+  entityType String?
+  entityId   String?
+  detail     Json?
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model RateLimitEvent {
+  id        String   @id @default(cuid())
+  key       String
+  createdAt DateTime @default(now())
+
+  @@index([key, createdAt])
+}

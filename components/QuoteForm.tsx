@@ -3,13 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { Send } from "lucide-react";
 import { whatsappHrefWithMessage } from "@/lib/site";
-
-const SERVICE_OPTIONS = [
-  "Evden Eve Nakliye",
-  "Parça Eşya Taşıma",
-  "Ofis Taşıma",
-  "Şehirler Arası Nakliye",
-];
+import { createContactSubmission } from "@/lib/actions/contact";
 
 const inputClass =
   "w-full rounded-xl border border-navy-950/15 bg-white px-4 py-3 text-sm text-navy-950 placeholder:text-navy-900/40 transition-colors focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/25 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-white/35";
@@ -18,18 +12,27 @@ const labelClass =
   "mb-1.5 block text-xs font-bold uppercase tracking-wider text-navy-900/60 dark:text-white/55";
 
 /**
- * Form verisi hiçbir sunucuya gönderilmez; mesaj olarak derlenir ve
- * WhatsApp sohbeti önceden doldurulmuş şekilde açılır.
+ * WhatsApp akışı (window.open) her zaman senkron ve garanti çalışır; DB
+ * kaydı arka planda, awaitsiz gönderilir — ağ/DB sorunu WhatsApp'ı asla
+ * engellemez.
  */
-export default function QuoteForm() {
+export default function QuoteForm({
+  phoneE164,
+  serviceOptions,
+}: {
+  phoneE164: string;
+  serviceOptions: string[];
+}) {
   const [sent, setSent] = useState(false);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const data = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const data = new FormData(form);
     const lines = [
       "Merhaba, web siteniz üzerinden ücretsiz teklif almak istiyorum.",
       `• Ad Soyad: ${String(data.get("name") ?? "").trim()}`,
+      `• Telefon: ${String(data.get("phone") ?? "").trim()}`,
       `• Nereden: ${String(data.get("from") ?? "").trim()}`,
       `• Nereye: ${String(data.get("to") ?? "").trim()}`,
       `• Hizmet: ${String(data.get("service") ?? "").trim()}`,
@@ -38,11 +41,14 @@ export default function QuoteForm() {
     if (note) lines.push(`• Not: ${note}`);
 
     window.open(
-      whatsappHrefWithMessage(lines.join("\n")),
+      whatsappHrefWithMessage(phoneE164, lines.join("\n")),
       "_blank",
       "noopener,noreferrer"
     );
     setSent(true);
+
+    void createContactSubmission(data);
+    form.reset();
   }
 
   return (
@@ -62,6 +68,21 @@ export default function QuoteForm() {
           required
           autoComplete="name"
           placeholder="Adınız ve soyadınız"
+          className={inputClass}
+        />
+      </div>
+
+      <div>
+        <label htmlFor="teklif-telefon" className={labelClass}>
+          Telefon
+        </label>
+        <input
+          id="teklif-telefon"
+          name="phone"
+          type="tel"
+          required
+          autoComplete="tel"
+          placeholder="05XX XXX XX XX"
           className={inputClass}
         />
       </div>
@@ -100,7 +121,7 @@ export default function QuoteForm() {
           Hizmet Türü
         </label>
         <select id="teklif-hizmet" name="service" className={inputClass}>
-          {SERVICE_OPTIONS.map((option) => (
+          {serviceOptions.map((option) => (
             <option key={option} value={option}>
               {option}
             </option>

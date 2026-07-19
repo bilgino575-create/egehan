@@ -3,7 +3,11 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, Menu, Moon, Sun, X } from "lucide-react";
 import Logo from "@/components/Logo";
-import { NAV_ITEMS } from "@/lib/site";
+
+export interface NavItemData {
+  label: string;
+  href: string;
+}
 
 function ThemeToggle() {
   function toggleTheme() {
@@ -29,7 +33,7 @@ function ThemeToggle() {
   );
 }
 
-export default function Header() {
+export default function Header({ navItems }: { navItems: NavItemData[] }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -71,7 +75,7 @@ export default function Header() {
 
         <nav aria-label="Ana menü" className="hidden lg:block">
           <ul className="flex items-center gap-1">
-            {NAV_ITEMS.map((item) => (
+            {navItems.map((item) => (
               <li key={item.href}>
                 <a
                   href={item.href}
@@ -120,7 +124,7 @@ export default function Header() {
         >
           <nav aria-label="Mobil menü" className="container-x py-4">
             <ul className="flex flex-col gap-1">
-              {NAV_ITEMS.map((item) => (
+              {navItems.map((item) => (
                 <li key={item.href}>
                   <a
                     href={item.href}

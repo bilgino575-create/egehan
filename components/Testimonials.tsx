@@ -1,7 +1,15 @@
 import { MapPin, Star } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import SectionHeading from "@/components/SectionHeading";
-import { TESTIMONIALS } from "@/lib/content";
+
+export interface TestimonialData {
+  id: string;
+  name: string;
+  route: string;
+  serviceName: string | null;
+  text: string;
+  rating: number;
+}
 
 function initials(name: string): string {
   return name
@@ -11,7 +19,7 @@ function initials(name: string): string {
     .toLocaleUpperCase("tr-TR");
 }
 
-export default function Testimonials() {
+export default function Testimonials({ testimonials }: { testimonials: TestimonialData[] }) {
   return (
     <section
       id="yorumlar"
@@ -25,18 +33,22 @@ export default function Testimonials() {
         />
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {TESTIMONIALS.map((t, i) => (
-            <Reveal key={t.name} delay={(i % 3) * 0.08} className="h-full">
+          {testimonials.map((t, i) => (
+            <Reveal key={t.id} delay={(i % 3) * 0.08} className="h-full">
               <figure className="flex h-full flex-col rounded-3xl bg-white p-7 shadow-sm ring-1 ring-navy-950/5 transition-shadow duration-300 hover:shadow-lg hover:shadow-navy-950/8 dark:bg-white/5 dark:ring-white/10">
                 <div
                   className="flex items-center gap-1"
                   role="img"
-                  aria-label="5 üzerinden 5 yıldız"
+                  aria-label={`5 üzerinden ${t.rating} yıldız`}
                 >
                   {Array.from({ length: 5 }).map((_, star) => (
                     <Star
                       key={star}
-                      className="size-4 fill-orange-400 text-orange-400"
+                      className={`size-4 ${
+                        star < t.rating
+                          ? "fill-orange-400 text-orange-400"
+                          : "fill-navy-950/10 text-navy-950/10 dark:fill-white/10 dark:text-white/10"
+                      }`}
                       aria-hidden="true"
                     />
                   ))}
@@ -57,7 +69,8 @@ export default function Testimonials() {
                     </div>
                     <div className="mt-0.5 flex items-center gap-1 text-xs text-muted">
                       <MapPin className="size-3 shrink-0" aria-hidden="true" />
-                      {t.route} • {t.service}
+                      {t.route}
+                      {t.serviceName ? ` • ${t.serviceName}` : ""}
                     </div>
                   </div>
                 </figcaption>

@@ -2,19 +2,24 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { FAQS } from "@/lib/content";
+
+export interface FaqData {
+  id: string;
+  question: string;
+  answer: string;
+}
 
 /** Erişilebilir akordeon; yükseklik animasyonu CSS grid ile yapılır. */
-export default function Faq() {
+export default function Faq({ faqs }: { faqs: FaqData[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
     <div className="flex flex-col gap-3">
-      {FAQS.map((faq, i) => {
+      {faqs.map((faq, i) => {
         const open = openIndex === i;
         return (
           <div
-            key={faq.question}
+            key={faq.id}
             className={`rounded-2xl border transition-colors duration-300 ${
               open
                 ? "border-orange-500/40 bg-orange-500/[0.04] dark:border-orange-400/30 dark:bg-orange-400/[0.06]"

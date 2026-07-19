@@ -1,15 +1,17 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import { SITE_SLOGAN } from "@/lib/site";
+import { getSettings } from "@/lib/data/settings";
 
-export const alt = `Egehan Lojistik — ${SITE_SLOGAN}`;
+export const dynamic = "force-dynamic";
+export const alt = "Egehan Lojistik — 81 İlde Güvenli ve Profesyonel Taşımacılık";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const CHIPS = ["Sigortalı Taşıma", "7/24 Destek", "Ücretsiz Keşif"];
 
 export default async function OpengraphImage() {
+  const settings = await getSettings();
   const [extraBold, medium] = await Promise.all([
     readFile(
       join(process.cwd(), "assets", "fonts", "PlusJakartaSans-ExtraBold.ttf")
@@ -100,7 +102,7 @@ export default async function OpengraphImage() {
           }}
         >
           <div style={{ fontSize: 66, fontWeight: 800, lineHeight: 1.15 }}>
-            {SITE_SLOGAN}
+            {settings.siteSlogan}
           </div>
           <div
             style={{

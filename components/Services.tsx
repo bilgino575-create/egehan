@@ -1,72 +1,18 @@
-import {
-  ArrowRight,
-  Building2,
-  Check,
-  Home,
-  Package,
-  Route,
-  type LucideIcon,
-} from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import SectionHeading from "@/components/SectionHeading";
+import { resolveIcon } from "@/lib/icon-map";
 
-type Service = {
-  icon: LucideIcon;
+export interface ServiceData {
+  id: string;
+  icon: string;
   title: string;
   description: string;
   features: string[];
-  popular?: boolean;
-};
+  popular: boolean;
+}
 
-const SERVICES: Service[] = [
-  {
-    icon: Home,
-    title: "Evden Eve Nakliye",
-    description:
-      "Evinizdeki tüm eşyalar sökümünden montajına kadar uzman ekibimizin güvencesinde; yeni evinize zahmetsizce taşının.",
-    features: [
-      "Söküm ve montaj dahil",
-      "Özel paketleme malzemeleri",
-      "Sigortalı taşıma",
-    ],
-    popular: true,
-  },
-  {
-    icon: Package,
-    title: "Parça Eşya Taşıma",
-    description:
-      "Az sayıda eşya için tam araç ücreti ödemeyin. Parsiyel taşımacılık ile eşyalarınız güvenle ve ekonomik şekilde ulaşsın.",
-    features: [
-      "Ekonomik parsiyel çözüm",
-      "Koli ve mobilya taşıma",
-      "Düzenli sefer takvimi",
-    ],
-  },
-  {
-    icon: Building2,
-    title: "Ofis Taşıma",
-    description:
-      "İş süreçleriniz aksamadan, hafta sonu ve mesai dışı planlama seçenekleriyle kurumsal standartlarda taşımacılık.",
-    features: [
-      "İş kaybı yaşatmayan plan",
-      "Arşiv ve elektronik taşıma",
-      "Kurulum ve yerleşim",
-    ],
-  },
-  {
-    icon: Route,
-    title: "81 İl'e Nakliye Hizmeti",
-    description:
-      "Türkiye'nin her iline kapıdan kapıya nakliye. Nereye taşınırsanız taşının, Egehan Lojistik yanınızda.",
-    features: [
-      "Kapıdan kapıya teslimat",
-      "Anlık bilgilendirme",
-      "Tüm illere düzenli sefer",
-    ],
-  },
-];
-
-export default function Services() {
+export default function Services({ services }: { services: ServiceData[] }) {
   return (
     <section id="hizmetler" className="scroll-mt-24 py-20 lg:py-24">
       <div className="container-x flex flex-col gap-12">
@@ -77,8 +23,10 @@ export default function Services() {
         />
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {SERVICES.map((service, i) => (
-            <Reveal key={service.title} delay={i * 0.08} className="h-full">
+          {services.map((service, i) => {
+            const Icon = resolveIcon(service.icon);
+            return (
+            <Reveal key={service.id} delay={i * 0.08} className="h-full">
               <article className="group relative flex h-full flex-col rounded-3xl border border-navy-950/10 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-navy-950/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/[0.08]">
                 {service.popular && (
                   <span className="absolute -top-3 right-6 rounded-full bg-orange-500 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-navy-950 shadow-md shadow-orange-500/30">
@@ -86,7 +34,7 @@ export default function Services() {
                   </span>
                 )}
                 <div className="mb-5 grid size-14 place-items-center rounded-2xl bg-navy-950 text-white transition-colors duration-300 group-hover:bg-orange-500 group-hover:text-navy-950 dark:bg-white/10 dark:group-hover:bg-orange-500">
-                  <service.icon className="size-7" aria-hidden="true" />
+                  <Icon className="size-7" aria-hidden="true" />
                 </div>
                 <h3 className="text-xl font-bold text-navy-950 dark:text-white">
                   {service.title}
@@ -119,7 +67,8 @@ export default function Services() {
                 </a>
               </article>
             </Reveal>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

@@ -2,22 +2,29 @@ import { Clock3, MapPin, Phone } from "lucide-react";
 import QuoteForm from "@/components/QuoteForm";
 import Reveal from "@/components/Reveal";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
-import { TEL_HREF, WHATSAPP_HREF } from "@/lib/site";
+import { telHref, whatsappHref } from "@/lib/site";
 
-const INFO_ITEMS = [
-  {
-    icon: MapPin,
-    title: "Hizmet Bölgesi",
-    text: "Türkiye geneli — 81 ilin tamamına kapıdan kapıya nakliye",
-  },
-  {
-    icon: Clock3,
-    title: "Çalışma Saatleri",
-    text: "Haftanın 7 günü hizmet, 7/24 destek hattı",
-  },
-];
-
-export default function Contact() {
+export default function Contact({
+  phoneE164,
+  workingHours,
+  serviceOptions,
+}: {
+  phoneE164: string;
+  workingHours: string;
+  serviceOptions: string[];
+}) {
+  const infoItems = [
+    {
+      icon: MapPin,
+      title: "Hizmet Bölgesi",
+      text: "Türkiye geneli — 81 ilin tamamına kapıdan kapıya nakliye",
+    },
+    {
+      icon: Clock3,
+      title: "Çalışma Saatleri",
+      text: workingHours,
+    },
+  ];
   return (
     <section id="iletisim" className="scroll-mt-24 pb-20 lg:pb-24">
       <div className="container-x">
@@ -51,14 +58,14 @@ export default function Contact() {
 
                 <div className="flex w-full flex-col gap-3 sm:flex-row">
                   <a
-                    href={TEL_HREF}
+                    href={telHref(phoneE164)}
                     className="inline-flex flex-1 items-center justify-center gap-2.5 rounded-2xl bg-orange-500 px-6 py-4 text-base font-bold text-navy-950 shadow-xl shadow-orange-500/25 transition-all hover:bg-orange-400"
                   >
                     <Phone className="size-5" aria-hidden="true" />
                     Hemen Arayın
                   </a>
                   <a
-                    href={WHATSAPP_HREF}
+                    href={whatsappHref(phoneE164)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex flex-1 items-center justify-center gap-2.5 rounded-2xl bg-[#25d366] px-6 py-4 text-base font-bold text-white shadow-xl shadow-[#25d366]/25 transition-transform hover:scale-[1.02]"
@@ -69,7 +76,7 @@ export default function Contact() {
                 </div>
 
                 <dl className="mt-2 grid w-full gap-4 sm:grid-cols-2">
-                  {INFO_ITEMS.map((item) => (
+                  {infoItems.map((item) => (
                     <div
                       key={item.title}
                       className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 p-4"
@@ -97,7 +104,7 @@ export default function Contact() {
                 <p className="mb-5 mt-1 text-sm text-muted">
                   1 dakikanızı ayırın, net teklifiniz hazırlansın.
                 </p>
-                <QuoteForm />
+                <QuoteForm phoneE164={phoneE164} serviceOptions={serviceOptions} />
               </div>
             </div>
           </div>

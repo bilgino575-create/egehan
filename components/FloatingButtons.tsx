@@ -1,12 +1,12 @@
 import { Phone } from "lucide-react";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
-import { TEL_HREF, WHATSAPP_HREF } from "@/lib/site";
+import { telHref, whatsappHref } from "@/lib/site";
 
 /**
  * Sitedeki tek doğrudan arama noktaları: telefon ve WhatsApp floating
  * butonları. Numara hiçbir yerde metin olarak gösterilmez.
  */
-export default function FloatingButtons() {
+export default function FloatingButtons({ phoneE164 }: { phoneE164: string }) {
   return (
     <div
       className="fixed bottom-5 right-5 z-50 flex flex-col items-center gap-3 pb-[env(safe-area-inset-bottom)]"
@@ -14,7 +14,7 @@ export default function FloatingButtons() {
       aria-label="Hızlı iletişim"
     >
       <a
-        href={TEL_HREF}
+        href={telHref(phoneE164)}
         aria-label="Bizi telefonla arayın"
         title="Hemen Arayın"
         className="grid size-14 animate-rise place-items-center rounded-full bg-navy-950 text-white shadow-xl shadow-navy-950/30 ring-1 ring-white/20 transition-transform duration-200 hover:scale-105 active:scale-95 dark:bg-orange-500 dark:shadow-orange-500/25 dark:ring-orange-300/40"
@@ -23,7 +23,7 @@ export default function FloatingButtons() {
         <Phone className="size-6" aria-hidden="true" />
       </a>
       <a
-        href={WHATSAPP_HREF}
+        href={whatsappHref(phoneE164)}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="WhatsApp üzerinden bize yazın"

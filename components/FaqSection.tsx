@@ -1,11 +1,11 @@
 import { Phone } from "lucide-react";
-import Faq from "@/components/Faq";
+import Faq, { type FaqData } from "@/components/Faq";
 import Reveal from "@/components/Reveal";
 import SectionHeading from "@/components/SectionHeading";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon";
-import { TEL_HREF, WHATSAPP_HREF } from "@/lib/site";
+import { telHref, whatsappHref } from "@/lib/site";
 
-export default function FaqSection() {
+export default function FaqSection({ faqs, phoneE164 }: { faqs: FaqData[]; phoneE164: string }) {
   return (
     <section id="sss" className="scroll-mt-24 py-20 lg:py-24">
       <div className="container-x grid items-start gap-12 lg:grid-cols-[2fr_3fr]">
@@ -23,7 +23,7 @@ export default function FaqSection() {
               </p>
               <div className="flex flex-col gap-2.5 sm:flex-row">
                 <a
-                  href={WHATSAPP_HREF}
+                  href={whatsappHref(phoneE164)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#25d366] px-5 py-3 text-sm font-bold text-white shadow-lg shadow-[#25d366]/25 transition-transform hover:scale-[1.02]"
@@ -32,7 +32,7 @@ export default function FaqSection() {
                   WhatsApp&apos;tan Yazın
                 </a>
                 <a
-                  href={TEL_HREF}
+                  href={telHref(phoneE164)}
                   className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-navy-950 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-navy-950/25 transition-transform hover:scale-[1.02] dark:bg-white dark:text-navy-950"
                 >
                   <Phone className="size-4.5" aria-hidden="true" />
@@ -44,7 +44,7 @@ export default function FaqSection() {
         </div>
 
         <Reveal delay={0.08}>
-          <Faq />
+          <Faq faqs={faqs} />
         </Reveal>
       </div>
     </section>

@@ -1,62 +1,16 @@
-import {
-  ArrowRight,
-  CalendarClock,
-  Headset,
-  PackageCheck,
-  ShieldCheck,
-  Users,
-  Wallet,
-  type LucideIcon,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import SectionHeading from "@/components/SectionHeading";
+import { resolveIcon } from "@/lib/icon-map";
 
-type Feature = {
-  icon: LucideIcon;
+export interface WhyUsCardData {
+  id: string;
+  icon: string;
   title: string;
   description: string;
-};
+}
 
-const FEATURES: Feature[] = [
-  {
-    icon: ShieldCheck,
-    title: "Sigortalı Taşımacılık",
-    description:
-      "Eşyalarınız yükleme anından teslimata kadar nakliyat sigortası güvencesi altındadır.",
-  },
-  {
-    icon: Users,
-    title: "Uzman ve Özenli Ekip",
-    description:
-      "Eğitimli, deneyimli ve güler yüzlü ekibimiz eşyalarınıza kendi eşyası gibi davranır.",
-  },
-  {
-    icon: CalendarClock,
-    title: "Zamanında Teslimat",
-    description:
-      "Belirlenen gün ve saatte adresinizdeyiz; planlarınız asla aksamaz.",
-  },
-  {
-    icon: PackageCheck,
-    title: "Profesyonel Paketleme",
-    description:
-      "Balonlu naylon, özel koli ve battaniyelerle her eşyaya özel koruma uygulanır.",
-  },
-  {
-    icon: Wallet,
-    title: "Şeffaf Fiyatlandırma",
-    description:
-      "Keşif sonrası net fiyat; sürpriz maliyet ve gizli ücret yoktur.",
-  },
-  {
-    icon: Headset,
-    title: "7/24 Canlı Destek",
-    description:
-      "Taşıma öncesinde, sırasında ve sonrasında bize her an ulaşabilirsiniz.",
-  },
-];
-
-export default function WhyUs() {
+export default function WhyUs({ cards }: { cards: WhyUsCardData[] }) {
   return (
     <section
       id="neden-biz"
@@ -81,19 +35,22 @@ export default function WhyUs() {
         />
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((feature, i) => (
-            <Reveal key={feature.title} delay={(i % 3) * 0.08} className="h-full">
-              <article className="h-full rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors duration-300 hover:border-orange-500/30 hover:bg-white/10">
-                <div className="mb-4 grid size-12 place-items-center rounded-xl bg-orange-500/15 text-orange-400">
-                  <feature.icon className="size-6" aria-hidden="true" />
-                </div>
-                <h3 className="text-lg font-bold text-white">{feature.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/60">
-                  {feature.description}
-                </p>
-              </article>
-            </Reveal>
-          ))}
+          {cards.map((card, i) => {
+            const Icon = resolveIcon(card.icon);
+            return (
+              <Reveal key={card.id} delay={(i % 3) * 0.08} className="h-full">
+                <article className="h-full rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors duration-300 hover:border-orange-500/30 hover:bg-white/10">
+                  <div className="mb-4 grid size-12 place-items-center rounded-xl bg-orange-500/15 text-orange-400">
+                    <Icon className="size-6" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white">{card.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-white/60">
+                    {card.description}
+                  </p>
+                </article>
+              </Reveal>
+            );
+          })}
         </div>
 
         <Reveal className="flex justify-center">
